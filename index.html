@@ -1,0 +1,45 @@
+cat <<EOF > public/index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Maitreji - Recenzii Animate</title>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: white; text-align: center; padding: 50px; }
+        input, button { padding: 10px; margin: 10px; border-radius: 5px; border: none; }
+        button { background: #00ff00; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>📚 Despre Noi Citindu-i Pe Alții</h1>
+    <input type="text" id="autor" placeholder="Nume Autor (ex: Augustin)">
+    <input type="text" id="titlu" placeholder="Titlu Carte">
+    <br>
+    <textarea id="mesaj" placeholder="Mesajul cheie..." rows="4" cols="50"></textarea>
+    <br>
+    <button onclick="generate()">Generează Video</button>
+    <div id="status"></div>
+
+    <script>
+        async function generate() {
+            const status = document.getElementById('status');
+            status.innerText = "Se procesează video-ul... te rog așteaptă.";
+            
+            const data = {
+                autor: document.getElementById('autor').value,
+                titlu: document.getElementById('titlu').value,
+                mesaj: document.getElementById('mesaj').value
+            };
+
+            const response = await fetch('/generate-video', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            status.innerHTML = 'Video gata! <br><video width="400" controls><source src="' + result.videoPath + '" type="video/mp4"></video>';
+        }
+    </script>
+</body>
+</html>
+EOFo
